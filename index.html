@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lapor PJU Kabupaten Serang - Pengaduan Lampu Jalan Digital</title>
+
+    <!-- Favicon / Logo Browser -->
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3176/3176298.png">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<!-- Open Graph / Preview WhatsApp & Sosial Media -->
+<meta property="og:title" content="Lapor PJU Kabupaten Serang">
+<meta property="og:description" content="Sistem Pengaduan Lampu Penerangan Jalan Umum (PJU) Rusak/Mati di Wilayah Kabupaten Serang. Mudah, Cepat, dan Transparan.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=800&auto=format&fit=crop&q=60">
+<meta property="og:type" content="website">
+    
+    <!-- Google Fonts & Tailwind CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSection('home')">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold bg-gradient-to-r from-blue-900 via-blue-700 to-indigo-800 bg-clip-text text-transparent">Lapor PJU Serang</h1>
+                        <p class="text-xs text-slate-500 font-medium">Mudah, Cepat, dan Transparan</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <button onclick="switchSection('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 bg-blue-50 transition">Beranda</button>
+                    <button onclick="switchSection('lapor')" id="nav-lapor" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition">Buat Laporan</button>
+                    <button onclick="switchSection('cek')" id="nav-cek" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition">Cek Status Laporan</button>
+                    <button onclick="switchSection('tentang')" id="nav-tentang" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition">Alur & Informasi</button>
+                </nav>
+
+                <!-- Officer Toggle / Status Indicator -->
+                <div class="flex items-center space-x-3">
+                    <div id="officerBadge" class="hidden flex items-center space-x-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Sesi Petugas Aktif</span>
+                    </div>
+                    
+                    <button id="officerToggleBtn" onclick="toggleOfficerMode()" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slate-900 text-white hover:bg-slate-800 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                        <span id="officerBtnText">Portal Petugas</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- 1. BERANDA / DASHBOARD SECTION -->
+        <section id="sec-home" class="space-y-10">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-8 sm:p-12 overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-block bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Pelayanan Publik Digital Kabupaten Serang
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-black leading-tight">
+                        PJU Mati? <span class="text-blue-400">Laporkan Sekarang!</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Layanan pengaduan masyarakat untuk perbaikan Lampu Penerangan Jalan Umum (PJU) di wilayah Kabupaten Serang. Cepat, tepat, dan transparan.
+                    </p>
+                    <div class="pt-4 flex flex-wrap gap-3">
+                        <button onclick="switchSection('lapor')" class="px-6 py-3.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition text-sm flex items-center space-x-2">
+                            <span>Buat Pengaduan Baru</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                        <button onclick="switchSection('cek')" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold rounded-xl transition text-sm">
+                            Pantau Status Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ringkasan Statistik -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-slate-800">Statistik Pengaduan</h3>
+                    <span class="text-xs text-slate-500 font-medium">Realtime Data System</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-slate-500">Total Pengaduan</span>
+                            <span class="w-3 h-3 rounded-full bg-slate-400"></span>
+                        </div>
+                        <p id="stat-total" class="text-3xl font-black text-slate-800 mt-3">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-amber-600">Menunggu</span>
+                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                        </div>
+                        <p id="stat-menunggu" class="text-3xl font-black text-amber-600 mt-3">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-blue-600">Diverifikasi</span>
+                            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                        </div>
+                        <p id="stat-diverifikasi" class="text-3xl font-black text-blue-600 mt-3">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-orange-600">Diproses</span>
+                            <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                        </div>
+                        <p id="stat-diproses" class="text-3xl font-black text-orange-600 mt-3">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between col-span-2 md:col-span-1">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-emerald-600">Selesai</span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                        </div>
+                        <p id="stat-selesai" class="text-3xl font-black text-emerald-600 mt-3">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indikator Visual Status Pengaduan -->
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm">
+                <div class="text-center max-w-lg mx-auto mb-8 space-y-1">
+                    <h3 class="text-2xl font-extrabold text-slate-800">Status Pengaduan</h3>
+                    <p class="text-slate-500 text-xs sm:text-sm">Tahapan alur penanganan laporan PJU oleh tim petugas teknis</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Status 1: Menunggu -->
+                    <div class="bg-slate-50/80 hover:bg-slate-100/80 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-between transition">
+                        <div class="w-12 h-12 bg-amber-400 rounded-xl shadow-md mb-4 flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Menunggu</h4>
+                            <p class="text-xs text-slate-500">Laporan baru dikirim oleh masyarakat</p>
+                        </div>
+                    </div>
+
+                    <!-- Status 2: Diverifikasi -->
+                    <div class="bg-slate-50/80 hover:bg-slate-100/80 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-between transition">
+                        <div class="w-12 h-12 bg-blue-600 rounded-xl shadow-md mb-4 flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Diverifikasi</h4>
+                            <p class="text-xs text-slate-500">Laporan sudah diperiksa keabsahannya oleh admin</p>
+                        </div>
+                    </div>
+
+                    <!-- Status 3: Diproses -->
+                    <div class="bg-slate-50/80 hover:bg-slate-100/80 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-between transition">
+                        <div class="w-12 h-12 bg-orange-500 rounded-xl shadow-md mb-4 flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Diproses</h4>
+                            <p class="text-xs text-slate-500">Petugas teknis melakukan tindak lanjut perbaikan di lapangan</p>
+                        </div>
+                    </div>
+
+                    <!-- Status 4: Selesai -->
+                    <div class="bg-slate-50/80 hover:bg-slate-100/80 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-between transition">
+                        <div class="w-12 h-12 bg-emerald-500 rounded-xl shadow-md mb-4 flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Selesai</h4>
+                            <p class="text-xs text-slate-500">PJU sudah diperbaiki dan berfungsi normal</p>
+                        </div>
+                    </div>
+
+                    <!-- Status 5: Ditolak -->
+                    <div class="bg-slate-50/80 hover:bg-slate-100/80 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-between transition">
+                        <div class="w-12 h-12 bg-red-500 rounded-xl shadow-md mb-4 flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Ditolak</h4>
+                            <p class="text-xs text-slate-500">Laporan tidak memenuhi ketentuan atau informasi tidak jelas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Daftar Laporan Terbaru / Publik -->
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Daftar Pengaduan Terbaru</h3>
+                        <p class="text-slate-500 text-xs">Transparansi laporan PJU di Kabupaten Serang</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="filterStatus" onchange="renderRecentReports()" class="bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="ALL">Semua Status</option>
+                            <option value="Menunggu">Menunggu</option>
+                            <option value="Diverifikasi">Diverifikasi</option>
+                            <option value="Diproses">Diproses</option>
+                            <option value="Selesai">Selesai</option>
+                            <option value="Ditolak">Ditolak</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] bg-slate-50/50">
+                                <th class="p-3 rounded-l-xl">Tiket ID</th>
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Pelapor</th>
+                                <th class="p-3">Kerusakan</th>
+                                <th class="p-3">Lokasi</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right rounded-r-xl">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentReportsTable" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. FORM BUAT LAPORAN SECTION -->
+        <section id="sec-lapor" class="hidden max-w-3xl mx-auto">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-xl space-y-8">
+                <div class="border-b border-slate-100 pb-5">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Form Pengaduan</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Laporkan PJU Rusak/Mati</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm mt-1">Lengkapi data laporan di bawah ini secara akurat agar petugas dapat segera melakukan tindak lanjut.</p>
+                </div>
+
+                <form id="formPengaduan" onsubmit="submitPengaduan(event)" class="space-y-6">
+                    <!-- Informasional -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Nama Pelapor <span class="text-red-500">*</span></label>
+                            <input type="text" id="inputNama" required placeholder="Contoh: Ahmad Subagja" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Nomor Telepon / WhatsApp <span class="text-red-500">*</span></label>
+                            <input type="tel" id="inputKontak" required placeholder="Contoh: 081234567890" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        </div>
+                    </div>
+
+                    <!-- Jenis Kerusakan & Kecamatan -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Jenis Kerusakan <span class="text-red-500">*</span></label>
+                            <select id="inputKerusakan" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                <option value="">-- Pilih Jenis Kerusakan --</option>
+                                <option value="Lampu PJU Mati Total">Lampu PJU Mati Total</option>
+                                <option value="Lampu Berkedip / Tidak Normal">Lampu Berkedip / Tidak Normal</option>
+                                <option value="Tiang / Komponen Lampu Rusak">Tiang / Komponen Lampu Rusak</option>
+                                <option value="Kabel Terlepas / Berbahaya">Kabel Terlepas / Berbahaya</option>
+                                <option value="Pemeriksaan & Maintenance Lokasi">Pemeriksaan & Maintenance Lokasi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                            <select id="inputKecamatan" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                <option value="">-- Pilih Kecamatan --</option>
+                                <option value="Ciruas">Ciruas</option>
+                                <option value="Kragilan">Kragilan</option>
+                                <option value="Cikande">Cikande</option>
+                                <option value="Kramatwatu">Kramatwatu</option>
+                                <option value="Anyar">Anyar</option>
+                                <option value="Cinangka">Cinangka</option>
+                                <option value="Baros">Baros</option>
+                                <option value="Petir">Petir</option>
+                                <option value="Lainnya">Lainnya (Kabupaten Serang)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Detail Lokasi -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Alamat / Patokan Lokasi PJU <span class="text-red-500">*</span></label>
+                        <textarea id="inputLokasi" required rows="2" placeholder="Sebutkan nama jalan, RT/RW, desa, atau patokan terdekat (contoh: Jalan Raya Serang-Jakarta KM 12, depan Indomaret Ciruas)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"></textarea>
+                    </div>
+
+                    <!-- Deskripsi Kerusakan -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Deskripsi Masalah <span class="text-red-500">*</span></label>
+                        <textarea id="inputDeskripsi" required rows="3" placeholder="Jelaskan kondisi detail lampu, misalnya lampu mati sejak 3 hari lalu, tiang miring, dsb." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"></textarea>
+                    </div>
+
+                    <!-- Foto Kondisi Lampu -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Upload Foto Kondisi PJU <span class="text-red-500">*</span></label>
+                        <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-blue-500 transition bg-slate-50/50 cursor-pointer" onclick="document.getElementById('inputFoto').click()">
+                            <input type="file" id="inputFoto" accept="image/*" required class="hidden" onchange="previewImage(this)">
+                            <div id="uploadPlaceholder" class="space-y-2">
+                                <svg class="w-10 h-10 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <p class="text-xs font-bold text-slate-600">Klik untuk mengunggah foto PJU</p>
+                                <p class="text-[11px] text-slate-400">Format JPG, PNG (Maksimal 5MB)</p>
+                            </div>
+                            <div id="imagePreviewContainer" class="hidden flex flex-col items-center space-y-2">
+                                <img id="imagePreview" class="max-h-48 rounded-xl border border-slate-200 object-cover shadow-sm">
+                                <span class="text-xs text-blue-600 font-semibold underline">Ganti Foto</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4 flex gap-4">
+                        <button type="button" onclick="switchSection('home')" class="w-1/3 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition text-sm">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-2/3 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 transition text-sm">
+                            Kirim Pengaduan Sekarang
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 3. CEK STATUS SECTION -->
+        <section id="sec-cek" class="hidden space-y-8 max-w-4xl mx-auto">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-lg space-y-6">
+                <div class="text-center max-w-md mx-auto space-y-2">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Lacak Laporan</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Cek Status Pengaduan</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm">Masukkan Kode Tiket Laporan Anda (contoh: PJU-20260918-001)</p>
+                </div>
+
+                <!-- Input Tiket -->
+                <div class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+                    <input type="text" id="searchTiketInput" placeholder="Ketik ID Tiket Pengaduan..." class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="cariTiket()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                        Cari Tiket
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hasil Pencarian Tiket Container -->
+            <div id="searchResultContainer" class="hidden">
+                <!-- Dynamic Content Loaded Here -->
+            </div>
+        </section>
+
+        <!-- 4. MODA / PORTAL PETUGAS SECTION -->
+        <section id="sec-petugas" class="hidden space-y-8">
+            <div class="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                    <span class="inline-block bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+                        Portal Manajemen Petugas PJU
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold">Dashboard Tindak Lanjut Petugas</h2>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Sistem Pengelolaan & Verifikasi Laporan Pengaduan Masyarakat Kabupaten Serang</p>
+                </div>
+                <button onclick="logoutOfficer()" class="self-start sm:self-center px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-bold rounded-xl transition">
+                    Keluar Sesi Petugas
+                </button>
+            </div>
+
+            <!-- Alert Warning -->
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center space-x-3 text-amber-800 text-xs sm:text-sm font-medium">
+                <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span><b>Perhatian Petugas:</b> Harap verifikasi laporan masuk dalam waktu 1x24 jam dan update progres perbaikan secara berkala.</span>
+            </div>
+
+            <!-- Tabel Petugas -->
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <h3 class="text-lg font-bold text-slate-800">Daftar Semua Pengaduan Masuk</h3>
+                    <input type="text" id="officerSearch" onkeyup="renderOfficerTable()" placeholder="Cari nama, lokasi, atau ID tiket..." class="bg-slate-50 border border-slate-200 text-xs rounded-xl px-4 py-2.5 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] bg-slate-50/50">
+                                <th class="p-3">ID Tiket</th>
+                                <th class="p-3">Pelapor / Kontak</th>
+                                <th class="p-3">Jenis Kerusakan</th>
+                                <th class="p-3">Kecamatan / Alamat</th>
+                                <th class="p-3">Status Saat Ini</th>
+                                <th class="p-3 text-center">Tindakan Petugas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officerReportsTable" class="divide-y divide-slate-100">
+                            <!-- Dynamically loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. TENTANG & ALUR SECTION -->
+        <section id="sec-tentang" class="hidden max-w-4xl mx-auto space-y-8">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-sm space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Konsep & Alur</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-2">Tentang Website Pengaduan PJU</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm mt-1">Konsep Sistem Pelayanan Publik Digital Kelompok 3 - Kabupaten Serang</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm leading-relaxed text-slate-600">
+                    <div class="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            <span>Latar Belakang</span>
+                        </h3>
+                        <p>Lampu Penerangan Jalan Umum (PJU) merupakan fasilitas publik vital. Lampu mati mengurangi kenyamanan dan keamanan pengguna jalan. Masyarakat membutuhkan sarana pengaduan yang mudah, cepat, dan terukur.</p>
+                    </div>
+
+                    <div class="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            <span>Tujuan Utama</span>
+                        </h3>
+                        <ul class="list-disc list-inside space-y-1 text-slate-600">
+                            <li>Mempermudah masyarakat melaporkan PJU mati</li>
+                            <li>Mempercepat penyampaian laporan ke petugas</li>
+                            <li>Memudahkan pemerintah mengelola aduan</li>
+                            <li>Memungkinkan masyarakat memantau status secara transparan</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tim Kelompok 3 -->
+                <div class="pt-4 border-t border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm mb-3">Tim Penyusun Konsep (Kelompok 3):</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Falen Lutfiana Ashari</span>
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Ina Rosalia</span>
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Nabila Khairunnisa</span>
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Pipi Syapitri</span>
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Safitri Damayanti</span>
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Sakilah Tsaqif Zhoriya Zhorin</span>
+                        <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">Vina Eka Pratiwi</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Modal Update Petugas -->
+    <div id="officerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+            <button onclick="closeOfficerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div>
+                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Aksi Petugas</span>
+                <h3 class="text-xl font-extrabold text-slate-900 mt-2">Update Status & Tindak Lanjut</h3>
+                <p id="modalTiketId" class="text-xs font-mono text-slate-500 font-bold mt-1">Tiket ID: -</p>
+            </div>
+
+            <form id="officerUpdateForm" onsubmit="saveOfficerUpdate(event)" class="space-y-4">
+                <input type="hidden" id="modalReportIndex">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Pilih Status Baru</label>
+                    <select id="modalStatusSelect" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Menunggu">Menunggu</option>
+                        <option value="Diverifikasi">Diverifikasi (Sudah diperiksa)</option>
+                        <option value="Diproses">Diproses (Tindak lanjut perbaikan)</option>
+                        <option value="Selesai">Selesai (PJU sudah diperbaiki)</option>
+                        <option value="Ditolak">Ditolak (Tidak memenuhi ketentuan)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Catatan Petugas / Alasan Penolakan</label>
+                    <textarea id="modalCatatanPetugas" rows="3" placeholder="Masukkan catatan teknis penanganan atau alasan jika laporan ditolak..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Foto Bukti Perbaikan (Optional Selesai)</label>
+                    <input type="file" id="modalFotoPerbaikan" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeOfficerModal()" class="w-1/2 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">Batal</button>
+                    <button type="submit" class="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md transition">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Login Petugas -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+            <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-slate-900 text-white rounded-2xl mx-auto flex items-center justify-center shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-900">Masuk Portal Petugas</h3>
+                <p class="text-xs text-slate-500">Khusus Administrator & Tim Teknis PJU</p>
+            </div>
+
+            <form onsubmit="handleOfficerLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Petugas</label>
+                    <input type="text" id="loginUser" required placeholder="Ketik: petugas" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN / Password</label>
+                    <input type="password" id="loginPass" required placeholder="Ketik: 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-md transition">
+                    Verifikasi & Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="font-semibold text-slate-700">Website Pengaduan Lampu Penerangan Jalan Umum (PJU) Kabupaten Serang</p>
+            <p>Dikembangkan berdasarkan Konsep Pelayanan Publik Digital - Kelompok 3</p>
+            <p class="text-slate-400">© 2026 Pemerintah Kabupaten Serang. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>
